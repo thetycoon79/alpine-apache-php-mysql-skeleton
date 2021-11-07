@@ -72,13 +72,69 @@ docker-compose up -d --build
 
 ![browse-php-7](asset/images/browse-php-7.png) 
 
-2. From your browser navigate to http://localhost:8282 for phpMyAdmin
+3. From your browser navigate to http://localhost:8282 for phpMyAdmin
 
 ![browse-phpMyAdmin](asset/images/browse-phpMyAdmin.png)
 
+4. MySQL Workbench  
+  
+![mysql-workbench-conn](asset/images/mysql-workbench-conn.png)
+
+**Simple How to**
+
+*Hello World*
+
+1. Edit myapp/index.php with
+
+```phpregexp
+<?php
+$date = date("Y/m/d");
+$greeting = "Hello from php_apache_mysql_skeleton.{$date}";
+echo $greeting;
+```
+
+2. Navigate to http://localhost:8080 or http://localhost:8181
+
+![how-to-1](asset/images/how-to-1.png)
+
+*MySQL*
+
+1. Edit myapp/index.php with
+
+```phpregexp
+<?php
+$host = 'db-server';
+$db   = 'app';
+$user = 'root';
+$pass = 'My53r3P@s50rD';
+$charset = 'utf8mb4';
+
+$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+$options = [
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::ATTR_EMULATE_PREPARES   => false,
+];
+try {
+    $pdo = new PDO($dsn, $user, $pass, $options);
+} catch (\PDOException $e) {
+    throw new \PDOException($e->getMessage(), (int)$e->getCode());
+}
+
+$stmt = $pdo->query('SELECT * FROM quotes');
+while ($row = $stmt->fetch())
+{
+    $authorQuotes = "{$row['quote']} - {$row['author']} <br/>";
+    echo $authorQuotes;
+}
+```
+
+2. Navigate to http://localhost:8080 or http://localhost:8181
+
+![how-to-mysql-2](asset/images/how-to-mysql-2.png)
+
 
 **Docker compose command**
-
 
 Start
 ```bash
@@ -138,3 +194,11 @@ docker rmi -f zulfadzlyrazak/php8-fpm:latest
 ```bash
 docker-compose up -d --force-recreate --build
 ```
+
+**Known Issues**
+
+1. ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/run/mysqld/mysqld.sock' (2)  
+
+![mysql-2002-error](asset/images/mysql-2002-error.png)
+
+Workaround : Wait for 3 minute after docker-compose up
