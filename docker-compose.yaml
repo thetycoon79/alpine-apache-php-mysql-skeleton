@@ -1,0 +1,59 @@
+version: "3.5"
+
+services:
+  web-server:
+    image: web-server:latest
+    container_name: 'web-server'
+    restart: 'always'
+    build:
+      context: 'apache'
+    ports:
+      - "8080:80"
+      - '8181:81'
+    volumes:
+      - './myapp:/var/www/myapp'
+      - './apache/php-fpm.conf:/usr/local/apache2/conf/php-fpm.conf'
+    depends_on:
+      - 'php-server-8'
+      - 'php-server-7'
+      - 'db-server'
+
+  php-server-8:
+    image: zulfadzlyrazak/php8-fpm:latest
+    container_name: 'app-php-8'
+    restart: 'always'
+    volumes:
+      - './myapp:/var/www/myapp'
+
+  php-server-7:
+    image: zulfadzlyrazak/php7-fpm:latest
+    container_name: 'app-php-7'
+    restart: 'always'
+    volumes:
+      - './myapp:/var/www/myapp'
+
+  db-server:
+    image: mysql:8
+    ports:
+      - '3306:3306'
+    container_name: 'app-db'
+    restart: 'always'
+    environment:
+      - 'MYSQL_ROOT_PASSWORD=My53r3P@s50rD'
+      - 'MYSQL_DATABASE=app'
+      - 'MYSQL_PASSWORD=My53r3P@s50rD'
+    volumes:
+      - './mysql-storage:/var/lib/mysql'
+      - './mysql-config/my.cnf:/etc/mysql/conf.d/my.cnf'
+  #      - './dump:/docker-entrypoint-initdb.d'
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: 'app-phpmyadmin'
+    restart: 'always'
+    ports:
+      - '8282:80'
+    environment:
+      - 'PMA_ARBITRARY=1'
+    depends_on:
+      - 'db-server'
