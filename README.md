@@ -31,11 +31,10 @@ phpMyAdmin 5.1.1
 
 ![tree-public](asset/images/tree-public.png)
 
-1. apache folder contains Dockerfile and php-fpm.conf configuration to run PHP-FPM with Apache
-2. asset folder stores resources like images, etc for the README.md
-3. myapp folder is the initial starting place for your code. Edit the index.php according to your need.
-4. mysql-config folder store settings overwrite for MySQL
-5. mysql-store folder is to persist your MySQL data. This can be moved to Docker volume.
+1. asset folder stores resources like images, etc for the README.md
+2. myapp folder is the initial starting place for your code. Edit the index.php according to your need.
+3. mysql-config folder store settings overwrite for MySQL
+4. mysql-store folder is to persist your MySQL data. This can be moved to Docker volume.
 
 
 **One time setup**

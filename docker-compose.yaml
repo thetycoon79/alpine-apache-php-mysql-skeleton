@@ -2,11 +2,9 @@ version: "3.5"
 
 services:
   web-server:
-    image: web-server:latest
+    image: zulfadzlyrazak/alpine-httpd-fpm:latest
     container_name: 'web-server'
     restart: 'always'
-    build:
-      context: 'apache'
     ports:
       - "8080:80"
       - '8181:81'
