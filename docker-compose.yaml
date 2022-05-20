@@ -1,13 +1,16 @@
 version: "3.5"
 
+networks:
+  my-awesome-network:
+
 services:
   web-server:
     image: zulfadzlyrazak/alpine-httpd-fpm:latest
-    container_name: 'web-server'
+    container_name: '${WEB_SERVER_CONTAINER_NAME}'
     restart: 'always'
     ports:
-      - "8080:80"
-      - '8181:81'
+      - '${PHP8_LOCAL_PORT}:${PHP8_CONTAINER_PORT}'
+      - '${PHP7_LOCAL_PORT}:${PHP7_CONTAINER_PORT}'
     volumes:
       - './myapp:/var/www/myapp'
       - './apache/php-fpm.conf:/usr/local/apache2/conf/php-fpm.conf'
@@ -15,43 +18,57 @@ services:
       - 'php-server-8'
       - 'php-server-7'
       - 'db-server'
+    networks:
+      - 'my-awesome-network'
 
   php-server-8:
     image: zulfadzlyrazak/php8-fpm:latest
-    container_name: 'app-php-8'
+    container_name: '${PHP8_CONTAINER_NAME}'
     restart: 'always'
     volumes:
       - './myapp:/var/www/myapp'
+    networks:
+      - 'my-awesome-network'
 
   php-server-7:
     image: zulfadzlyrazak/php7-fpm:latest
-    container_name: 'app-php-7'
+    container_name: '${PHP7_CONTAINER_NAME}'
     restart: 'always'
     volumes:
       - './myapp:/var/www/myapp'
+    networks:
+      - 'my-awesome-network'
 
   db-server:
     image: mysql:8
     ports:
-      - '3306:3306'
-    container_name: 'app-db'
+      - '${MYSQL_LOCAL_PORT}:${MYSQL_CONTAINER_PORT}'
+    container_name: '${MYSQL_CONTAINER_NAME}'
     restart: 'always'
+    command: '--default-authentication-plugin=mysql_native_password'
     environment:
-      - 'MYSQL_ROOT_PASSWORD=My53r3P@s50rD'
-      - 'MYSQL_DATABASE=app'
-      - 'MYSQL_PASSWORD=My53r3P@s50rD'
+      - 'MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}'
+      - 'MYSQL_DATABASE=${MYSQL_DATABASE}'
+      - 'MYSQL_PASSWORD=${MYSQL_PASSWORD}'
+      - 'MYSQL_USER=${MYSQL_USER}'
     volumes:
       - './mysql-storage:/var/lib/mysql'
-      - './mysql-config/my.cnf:/etc/mysql/conf.d/my.cnf'
+      - './mysql-config:/etc/mysql/conf.d'
       - './dumps:/docker-entrypoint-initdb.d'
+    networks:
+      - 'my-awesome-network'
 
   phpmyadmin:
     image: phpmyadmin
-    container_name: 'app-phpmyadmin'
+    container_name: '${PHPMYADMIN_CONTAINER_NAME}'
     restart: 'always'
     ports:
-      - '8282:80'
+      - '${PHPMYADMIN_LOCAL_PORT}:${PHPMYADMIN_CONTAINER_PORT}'
     environment:
       - 'PMA_ARBITRARY=1'
+      - 'PMA_HOST=${PHPMYADMIN_HOST}'
+      - 'PMA_PORT=${MYSQL_CONTAINER_PORT}'
     depends_on:
       - 'db-server'
+    networks:
+      - 'my-awesome-network'

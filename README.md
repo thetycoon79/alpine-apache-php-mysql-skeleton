@@ -26,7 +26,6 @@ phpMyAdmin 5.1.1
 
 ![phpmyadmin](asset/images/phpmyadmin.png)
 
-
 **Folder structure**
 
 ![tree-public](asset/images/tree-public.png)
@@ -36,20 +35,27 @@ phpMyAdmin 5.1.1
 3. mysql-config folder store settings overwrite for MySQL
 4. mysql-store folder is to persist your MySQL data. This can be moved to Docker volume.
 
-
 **One time setup**
 
 1. Create work directory
+
 ```bash
 mkdir myCoolProject && cd myCoolProject
-``` 
+```
 
 2. Clone the [alpine-apache-php-mysql-skeleton repo](https://github.com/thetycoon79/alpine-apache-php-mysql-skeleton)
+
 ```bash
 git clone https://github.com/thetycoon79/alpine-apache-php-mysql-skeleton.git .
 ```
 
-3. Build the Docker containers
+3. Create a copy of .env from sampleEnv
+
+   ```bash
+   cp sampleEnv .env
+   ```
+4. Build the Docker containers
+
 ```bash
 docker-compose up -d --build
 ```
@@ -60,7 +66,6 @@ docker-compose up -d --build
 
 ![dockercompose-up-first-time-finish-public](asset/images/dockercompose-up-first-time-finish-public.png)
 
-
 **Accessing the environment;**
 
 1. From your browser navigate to http://localhost:8080 for PHP8
@@ -69,14 +74,14 @@ docker-compose up -d --build
 
 2. From your browser navigate to http://localhost:8181 for PHP7
 
-![browse-php-7](asset/images/browse-php-7.png) 
+![browse-php-7](asset/images/browse-php-7.png)
 
 3. From your browser navigate to http://localhost:8282 for phpMyAdmin
 
 ![browse-phpMyAdmin](asset/images/browse-phpMyAdmin.png)
 
-4. MySQL Workbench  
-  
+4. MySQL Workbench
+
 ![mysql-workbench-conn](asset/images/mysql-workbench-conn.png)
 
 **Simple How to**
@@ -132,71 +137,82 @@ while ($row = $stmt->fetch())
 
 ![how-to-mysql-2](asset/images/how-to-mysql-2.png)
 
-
 **Docker compose command**
 
 Start
+
 ```bash
 docker-compose start
 ```
 
 Stop
+
 ```bash
 docker-compose stop
 ```
 
 Rebuild only PHP8 Docker container
+
 ```bash
-docker-compose build php-server-8
+docker-compose build my-awesome-php-server-8
 ```
 
 Rebuild only PHP7 Docker container
+
 ```bash
-docker-compose build php-server-7
+docker-compose build my-awesome-php-server-7
 ```
 
 Rebuild only Apache Docker container
+
 ```bash
-docker-compose build web-server
+docker-compose build my-awesome-web-server
 ```
 
 Rebuild only MySQL Docker container
+
 ```bash
-docker-compose build db-server
+docker-compose build my-awesome-mysql-8-server
 ```
 
 Rebuild only phpMyAdmin Docker container
+
 ```bash
-docker-compose build phpmyadmin
+docker-compose build my-awesome-phpmyadmin
 ```
 
 Accessing MySQL Docker container
+
 ```bash
-docker exec -it app-db mysql -uroot -pMy53r3P@s50rD
+docker exec -it app-db my-awesome-mysql-8-server -uroot -pMy53r3P@s50rD
 ```
 
 Accessing Apache Docker logs
+
 ```bash
-docker logs -f web-server
+docker logs -f my-awesome-web-server
 ```
 
-**Kill 'em all - this will destroy all your PHP and Apache Docker containers**
+**Kill 'em all - this will destroy all your PHP and Apache Docker Image and containers**
+
 ```bash
 docker-compose stop && \
 docker-compose down && \
 docker-compose kill && \
-docker rmi -f web-server:latest && \
+docker rmi -f zulfadzlyrazak/alpine-httpd-fpm:latest && \
 docker rmi -f zulfadzlyrazak/php7-fpm:latest && \
 docker rmi -f zulfadzlyrazak/php8-fpm:latest
 ```
+
 **Start fresh - will recreate fresh build of all Apache,PHP,MySQL and phpMyAdmin Docker containers**
+
 ```bash
 docker-compose up -d --force-recreate --build
 ```
 
 **Known Issues**
 
-1. ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/run/mysqld/mysqld.sock' (2)  
+1. ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/run/mysqld/mysqld.sock' (2)
 
 ![mysql-2002-error](asset/images/mysql-2002-error.png)
 
